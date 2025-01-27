@@ -1,0 +1,196 @@
+# ==== pytest ====
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--ds=config.settings.test --reuse-db --import-mode=importlib"
+python_files = [
+    "tests.py",
+    "test_*.py",
+]
+
+# ==== Coverage ====
+[tool.coverage.run]
+include = ["bond_service/**"]
+omit = ["*/migrations/*", "*/tests/*"]
+plugins = ["django_coverage_plugin"]
+
+# ==== mypy ====
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
+
+[[tool.mypy.overrides]]
+# Django migrations should not produce any errors:
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
+
+# ==== djLint ====
+[tool.djlint]
+blank_line_after_tag = "load,extends"
+close_void_tags = true
+format_css = true
+format_js = true
+# TODO: remove T002 when fixed https://github.com/djlint/djLint/issues/687
+ignore = "H006,H030,H031,T002"
+include = "H017,H035"
+indent = 2
+max_line_length = 119
+profile = "django"
+
+[tool.djlint.css]
+indent_size = 2
+
+[tool.djlint.js]
+indent_size = 2
+
+[tool.ruff]
+target-version = "py312"
+# Exclude a variety of commonly ignored directories.
+extend-exclude = [
+    "*/migrations/*.py",
+    "staticfiles/*",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "C90",
+    "I",
+    "N",
+    "UP",
+    "YTT",
+    # "ANN", # flake8-annotations: we should support this in the future but 100+ errors atm
+    "ASYNC",
+    "S",
+    "BLE",
+    "FBT",
+    "B",
+    "A",
+    "COM",
+    "C4",
+    "DTZ",
+    "T10",
+    "DJ",
+    "EM",
+    "EXE",
+    "FA",
+    'ISC',
+    "ICN",
+    "G",
+    'INP',
+    'PIE',
+    "T20",
+    'PYI',
+    'PT',
+    "Q",
+    "RSE",
+    "RET",
+    "SLF",
+    "SLOT",
+    "SIM",
+    "TID",
+    "TCH",
+    "INT",
+    # "ARG", # Unused function argument
+    "PTH",
+    "ERA",
+    "PD",
+    "PGH",
+    "PL",
+    "TRY",
+    "FLY",
+    # "NPY",
+    # "AIR",
+    "PERF",
+    # "FURB",
+    # "LOG",
+    "RUF",
+]
+ignore = [
+    "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+    "SIM102", # sometimes it's better to nest
+    "UP038", # Checks for uses of isinstance/issubclass that take a tuple
+    # of types for comparison.
+    # Deactivated because it can make the code slow:
+    # https://github.com/astral-sh/ruff/issues/7871
+]
+# The fixes in extend-unsafe-fixes will require
+# provide the `--unsafe-fixes` flag when fixing.
+extend-unsafe-fixes = [
+    "UP038",
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[dependency-groups]
+dev = [
+  "Werkzeug[watchdog]==3.0.6", # https://github.com/pallets/werkzeug
+  "ipdb==0.13.13", # https://github.com/psycopg/psycopg
+  # Testing
+  # ------------------------------------------------------------------------------
+  "mypy==1.11.2", # https://github.com/python/mypy
+  "django-stubs[compatible-mypy]==5.1.0", # https://github.com/typeddjango/django-stubs
+  "pytest==8.3.3", # https://github.com/pytest-dev/pytest
+  "pytest-sugar==1.0.0", # https://github.com/Frozenball/pytest-sugar
+  "djangorestframework-stubs==3.15.1", # https://github.com/typeddjango/djangorestframework-stubs
+  # Code quality
+  # ------------------------------------------------------------------------------
+  "ruff==0.6.9", # https://github.com/astral-sh/ruff
+  "coverage==7.6.1", # https://github.com/nedbat/coveragepy
+  "djlint==1.35.2", # https://github.com/Riverside-Healthcare/djLint
+  "pre-commit==3.8.0", # https://github.com/pre-commit/pre-commit
+  # Django
+  # ------------------------------------------------------------------------------
+  "factory-boy==3.3.1", # https://github.com/FactoryBoy/factory_boy
+  "django-debug-toolbar==4.4.6", # https://github.com/jazzband/django-debug-toolbar
+  "django-extensions==3.2.3", # https://github.com/django-extensions/django-extensions
+  "django-coverage-plugin==3.1.0", # https://github.com/nedbat/django_coverage_plugin
+  "pytest-django==4.9.0", # https://github.com/pytest-dev/pytest-django
+  "types-python-dateutil>=2.9.0.20241206",
+]
+
+[project]
+name = "bond_service"
+version = "0.1.0"
+description = "Bond Service Interview Assignment for CFG"
+readme = "README.md"
+
+license = { text = "MIT" }
+authors = [
+  { name = "Lukas Jansky", email = "lukas.jansky22@gmail.com" },
+]
+requires-python = "==3.12.*"
+dependencies = [
+  "argon2-cffi==23.1.0", # https://github.com/hynek/argon2_cffi
+  "whitenoise==6.7.0", # https://github.com/redis/hiredis-py
+  # Django
+  # ------------------------------------------------------------------------------
+  "django==5.0.9", # pyup: < 5.1  # https://www.djangoproject.com/
+  "django-environ==0.11.2", # https://github.com/joke2k/django-environ
+  "django-model-utils==5.0.0", # https://github.com/jazzband/django-redis
+  # Django REST Framework
+  "djangorestframework==3.15.2", # https://github.com/encode/django-rest-framework
+  "django-cors-headers==4.4.0", # https://github.com/adamchainz/django-cors-headers
+  # DRF-spectacular for api documentation
+  "drf-spectacular==0.27.2", # https://github.com/tfranzel/drf-spectacular
+  # Django
+  # ------------------------------------------------------------------------------
+  "django-anymail==12.0", # https://github.com/anymail/django-anymail
+  "psycopg2-binary>=2.9.10",
+  "python-stdnum>=1.20",
+  "python-dateutil>=2.9.0.post0",
+]

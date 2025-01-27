@@ -1,0 +1,45 @@
+volumes:
+  bond_service_local_postgres_data: {}
+  bond_service_local_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bond_service_local_django
+    container_name: bond_service_local_django
+    volumes:
+      - /app/.venv
+      - .:/app:z
+    # There might be a watch instead of volumes for development.
+    # Due to compatibility reasons I still use the volumes.
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: .
+    #       target: /app
+    #       ignore:
+    #         - .venv/
+    #     - action: rebuild
+    #       path: ./pyproject.toml
+    depends_on:
+      - postgres
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/local/postgres/Dockerfile
+    image: bond_service_local_postgres
+    container_name: bond_service_local_postgres
+    volumes:
+      - bond_service_local_postgres_data:/var/lib/postgresql/data
+      - bond_service_local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
