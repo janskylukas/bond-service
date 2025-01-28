@@ -2,7 +2,7 @@
 
 Zpracování zadání [Bond Service](https://github.com/cfgtech/bond-service-interview-assignment) 
 
-Toto [README](README.md) obsahuje informace o struktuře projektu a návod pro spuštění aplikace, další popis fungování aplikace se nachází v kódu 
+Toto [README](README.md) obsahuje návod pro spuštění aplikace, další popis fungování aplikace se nachází v kódu (anglicky).
 
 Pro zpracování úlohy jsem použil přístup [DRF](https://www.django-rest-framework.org) ViewSetů, a Serializerů.
 
